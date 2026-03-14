@@ -1,0 +1,11 @@
+#!.jar
+#mvnw.cmd
+.git/
+.gitignore
+Dockerfile
+.dockerignore
+.idea/
+.vscode/
+*.iml
+README.md
+HELP.md
