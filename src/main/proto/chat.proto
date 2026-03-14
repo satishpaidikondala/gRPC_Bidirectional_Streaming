@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package chat;
+
+/* * These options tell the compiler to generate multiple Java files
+ * and place them in your specific project package.
+ */
+option java_multiple_files = true;
+option java_package = "com.example.grpc.chat";
+option java_outer_classname = "ChatProto";
+
+// The service definition containing all our RPC methods
+service ChatService {
+  
+  // Requirement 6: Join a room to receive messages (Server Streaming)
+  rpc JoinRoom(JoinRoomRequest) returns (stream ChatMessage);
+
+  // Requirement 7: The real-time bidirectional messaging pipe
+  rpc ChatStream(stream ChatMessage) returns (stream ChatMessage);
+
+  // Requirement 8: List users currently in a room (Unary)
+  rpc GetRoomUsers(RoomRequest) returns (UserListResponse);
+
+  // Requirement 9: Exit a room (Unary)
+  rpc LeaveRoom(LeaveRoomRequest) returns (LeaveRoomResponse);
+}
+
+/* * The main message object. Note the field numbers (1, 2, 3...). 
+ * These are used in the binary encoding to make it faster than JSON.
+ */
+message ChatMessage {
+  string message_id = 1;
+  string room_id = 2;
+  string user_id = 3;
+  string username = 4;
+  string content = 5;
+  int64 timestamp = 6;
+  MessageType type = 7;
+}
+
+// Requirement 2 & 3: Different types of messages handled by the system
+enum MessageType {
+  TEXT = 0;
+  IMAGE_URL = 1;
+  SYSTEM_JOIN = 2;
+  SYSTEM_LEAVE = 3;
+}
+
+message JoinRoomRequest {
+  string room_id = 1;
+  string user_id = 2;
+  string username = 3;
+}
+
+message RoomRequest {
+  string room_id = 1;
+}
+
+message User {
+  string user_id = 1;
+  string username = 2;
+}
+
+message UserListResponse {
+  repeated User users = 1; // 'repeated' is the Protobuf way of saying List<User>
+}
+
+message LeaveRoomRequest {
+  string room_id = 1;
+  string user_id = 2;
+}
+
+message LeaveRoomResponse {
+  bool success = 1;
+}
